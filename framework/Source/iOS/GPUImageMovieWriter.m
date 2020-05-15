@@ -252,6 +252,7 @@ NSString *const kGPUImageColorSwizzlingFragmentShaderString = SHADER_STRING
     assetWriterPixelBufferInput = [AVAssetWriterInputPixelBufferAdaptor assetWriterInputPixelBufferAdaptorWithAssetWriterInput:assetWriterVideoInput sourcePixelBufferAttributes:sourcePixelBufferAttributesDictionary];
     
     [assetWriter addInput:assetWriterVideoInput];
+    assetWriter.shouldOptimizeForNetworkUse = YES;
 }
 
 - (void)setEncodingLiveVideo:(BOOL) value
