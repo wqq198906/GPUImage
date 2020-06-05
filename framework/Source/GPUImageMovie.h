@@ -35,6 +35,8 @@
  */
 @property(readonly, nonatomic) float progress;
 
+@property (nonatomic, strong) void(^processMoviePosition)(double position);
+
 /** This is used to send the delete Movie did complete playing alert
  */
 @property (readwrite, nonatomic, assign) id <GPUImageMovieDelegate>delegate;

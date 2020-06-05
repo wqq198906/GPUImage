@@ -534,6 +534,9 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
     int bufferHeight = (int) CVPixelBufferGetHeight(movieFrame);
     int bufferWidth = (int) CVPixelBufferGetWidth(movieFrame);
 
+    if (self.processMoviePosition) {
+        self.processMoviePosition(CMTimeGetSeconds(currentSampleTime));
+    }
     CFTypeRef colorAttachments = CVBufferGetAttachment(movieFrame, kCVImageBufferYCbCrMatrixKey, NULL);
     if (colorAttachments != NULL)
     {
