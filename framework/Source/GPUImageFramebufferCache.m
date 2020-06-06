@@ -67,7 +67,7 @@
 
 #pragma mark -
 #pragma mark Framebuffer management
-
+//add by wqq
 - (NSString *)hashForSize:(CGSize)size textureOptions:(GPUTextureOptions)textureOptions onlyTexture:(BOOL)onlyTexture extraData:(long)value;
 {
     if (onlyTexture)
@@ -85,15 +85,17 @@
     return [self hashForSize:size textureOptions:textureOptions onlyTexture:onlyTexture extraData:0];
 }
 
+//add by wqq
 - (GPUImageFramebuffer *)fetchFramebufferForSize:(CGSize)framebufferSize textureOptions:(GPUTextureOptions)textureOptions onlyTexture:(BOOL)onlyTexture extraDate:(long)value
 {
     __block GPUImageFramebuffer *framebufferFromCache = nil;
     //    dispatch_sync(framebufferCacheQueue, ^{
         runSynchronouslyOnVideoProcessingQueue(^{
-            NSString *lookupHash = [self hashForSize:framebufferSize textureOptions:textureOptions onlyTexture:onlyTexture];
+            NSString *lookupHash = [self hashForSize:framebufferSize textureOptions:textureOptions onlyTexture:onlyTexture extraData:value];
             NSNumber *numberOfMatchingTexturesInCache = [framebufferTypeCounts objectForKey:lookupHash];
             NSInteger numberOfMatchingTextures = [numberOfMatchingTexturesInCache integerValue];
-            
+//            NSLog(@"fetchFramebufferForSize %@-%@-%ld", lookupHash, numberOfMatchingTexturesInCache, numberOfMatchingTextures);
+
             if ([numberOfMatchingTexturesInCache integerValue] < 1)
             {
                 // Nothing in the cache, create a new framebuffer to use
