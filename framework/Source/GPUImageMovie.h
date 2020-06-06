@@ -35,7 +35,7 @@
  */
 @property(readonly, nonatomic) float progress;
 
-@property (nonatomic, strong) void(^processMoviePosition)(double position);
+@property (nonatomic, strong) void(^processMoviePosition)(CVPixelBufferRef pixelBuffer, CMTime time);
 
 /** This is used to send the delete Movie did complete playing alert
  */
