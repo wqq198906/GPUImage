@@ -6,6 +6,7 @@
 
 // Framebuffer management
 - (GPUImageFramebuffer *)fetchFramebufferForSize:(CGSize)framebufferSize textureOptions:(GPUTextureOptions)textureOptions onlyTexture:(BOOL)onlyTexture;
+- (GPUImageFramebuffer *)fetchFramebufferForSize:(CGSize)framebufferSize textureOptions:(GPUTextureOptions)textureOptions onlyTexture:(BOOL)onlyTexture extraDate:(long)value; //add by wqq
 - (GPUImageFramebuffer *)fetchFramebufferForSize:(CGSize)framebufferSize onlyTexture:(BOOL)onlyTexture;
 - (void)returnFramebufferToCache:(GPUImageFramebuffer *)framebuffer;
 - (void)purgeAllUnassignedFramebuffers;
