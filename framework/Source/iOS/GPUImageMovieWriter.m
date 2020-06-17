@@ -35,6 +35,7 @@ NSString *const kGPUImageColorSwizzlingFragmentShaderString = SHADER_STRING
     BOOL audioEncodingIsFinished, videoEncodingIsFinished;
 
     BOOL isRecording;
+    CMTime lastAudioTime, lastVideoTime;
 }
 
 // Movie recording
@@ -141,6 +142,8 @@ NSString *const kGPUImageColorSwizzlingFragmentShaderString = SHADER_STRING
     });
         
     [self initializeMovieWithOutputSettings:outputSettings];
+    lastAudioTime = kCMTimeZero;
+    lastVideoTime = kCMTimeZero;
 
     return self;
 }
@@ -377,6 +380,7 @@ NSString *const kGPUImageColorSwizzlingFragmentShaderString = SHADER_STRING
         CFRetain(audioBuffer);
 
         CMTime currentSampleTime = CMSampleBufferGetOutputPresentationTimeStamp(audioBuffer);
+        lastAudioTime = CMTimeAdd(currentSampleTime, CMSampleBufferGetDuration(audioBuffer));
         
         if (CMTIME_IS_INVALID(startTime))
         {
@@ -543,6 +547,15 @@ NSString *const kGPUImageColorSwizzlingFragmentShaderString = SHADER_STRING
             //NSLog(@"audio requestMediaDataWhenReadyOnQueue begin");
             while( assetWriterAudioInput.readyForMoreMediaData && ! _paused )
             {
+//                int audioTimePts = CMTimeGetSeconds(lastAudioTime) * 1000;
+//                int videoTimePts = CMTimeGetSeconds(lastVideoTime) * 1000;
+//                NSLog(@"check audio and video pts %d-%d", audioTimePts, videoTimePts);
+//                if (audioTimePts > videoTimePts) {
+//                    NSDate *maxDate = [NSDate dateWithTimeIntervalSinceNow:0.1];
+//                    [[NSRunLoop currentRunLoop] runUntilDate:maxDate];
+//                    continue;
+//                }
+
                 if( audioInputReadyCallback && ! audioInputReadyCallback() && ! audioEncodingIsFinished )
                 {
                     runAsynchronouslyOnContextQueue(_movieWriterContext, ^{
@@ -799,8 +812,15 @@ NSString *const kGPUImageColorSwizzlingFragmentShaderString = SHADER_STRING
             }
             else if(self.assetWriter.status == AVAssetWriterStatusWriting)
             {
-                if (![assetWriterPixelBufferInput appendPixelBuffer:pixel_buffer withPresentationTime:frameTime])
-                    NSLog(@"Problem appending pixel buffer at time: %@", CFBridgingRelease(CMTimeCopyDescription(kCFAllocatorDefault, frameTime)));
+                //视频时间戳要递增
+                if (CMTimeCompare(frameTime, lastVideoTime) > 0 ) {
+                    if (![assetWriterPixelBufferInput appendPixelBuffer:pixel_buffer withPresentationTime:frameTime]) {
+                        NSLog(@"Problem appending pixel buffer at time: %@", CFBridgingRelease(CMTimeCopyDescription(kCFAllocatorDefault, frameTime)));
+                    }
+                    else {
+                        lastVideoTime = frameTime;
+                    }
+                }
             }
             else
             {
