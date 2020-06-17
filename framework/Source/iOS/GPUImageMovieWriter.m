@@ -36,6 +36,7 @@ NSString *const kGPUImageColorSwizzlingFragmentShaderString = SHADER_STRING
 
     BOOL isRecording;
     CMTime lastAudioTime, lastVideoTime;
+    BOOL firstVideoTime;
 }
 
 // Movie recording
@@ -144,6 +145,7 @@ NSString *const kGPUImageColorSwizzlingFragmentShaderString = SHADER_STRING
     [self initializeMovieWithOutputSettings:outputSettings];
     lastAudioTime = kCMTimeZero;
     lastVideoTime = kCMTimeZero;
+    firstVideoTime = YES;
 
     return self;
 }
@@ -813,13 +815,23 @@ NSString *const kGPUImageColorSwizzlingFragmentShaderString = SHADER_STRING
             else if(self.assetWriter.status == AVAssetWriterStatusWriting)
             {
                 //视频时间戳要递增
-                if (CMTimeCompare(frameTime, lastVideoTime) > 0 ) {
-                    if (![assetWriterPixelBufferInput appendPixelBuffer:pixel_buffer withPresentationTime:frameTime]) {
-                        NSLog(@"Problem appending pixel buffer at time: %@", CFBridgingRelease(CMTimeCopyDescription(kCFAllocatorDefault, frameTime)));
+                CMTime adjustFrameTime = frameTime;
+                if (firstVideoTime) {
+                    firstVideoTime = NO;
+                }
+                else {
+                    if (CMTimeCompare(frameTime, lastVideoTime) <= 0 ) {
+                        double time = CMTimeGetSeconds(frameTime) + 0.001;
+                        adjustFrameTime = CMTimeMake(time * 1000, 1000);
                     }
-                    else {
-                        lastVideoTime = frameTime;
-                    }
+                }
+                
+//                NSLog(@"appending pixel buffer at time: %@", CFBridgingRelease(CMTimeCopyDescription(kCFAllocatorDefault, adjustFrameTime)));
+                if (![assetWriterPixelBufferInput appendPixelBuffer:pixel_buffer withPresentationTime:adjustFrameTime]) {
+                    NSLog(@"Problem appending pixel buffer at time: %@", CFBridgingRelease(CMTimeCopyDescription(kCFAllocatorDefault, adjustFrameTime)));
+                }
+                else {
+                    lastVideoTime = frameTime;
                 }
             }
             else
