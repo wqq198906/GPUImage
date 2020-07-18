@@ -232,15 +232,20 @@
 
 - (void)recalculateViewGeometry;
 {
+    __block CGRect rect = CGRectZero;
+    runOnMainQueueWithoutDeadlocking(^{
+        rect = self.bounds;
+    });
+    
     runSynchronouslyOnVideoProcessingQueue(^{
         CGFloat heightScaling, widthScaling;
         
-        CGSize currentViewSize = self.bounds.size;
+        CGSize currentViewSize = rect.size;
         
         //    CGFloat imageAspectRatio = inputImageSize.width / inputImageSize.height;
         //    CGFloat viewAspectRatio = currentViewSize.width / currentViewSize.height;
         
-        CGRect insetRect = AVMakeRectWithAspectRatioInsideRect(inputImageSize, self.bounds);
+        CGRect insetRect = AVMakeRectWithAspectRatioInsideRect(inputImageSize, rect);
         
         switch(_fillMode)
         {
