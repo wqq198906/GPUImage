@@ -416,7 +416,13 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
 {
     if (reader.status == AVAssetReaderStatusReading && ! videoEncodingIsFinished)
     {
-        CMSampleBufferRef sampleBufferRef = [readerVideoTrackOutput copyNextSampleBuffer];
+        CMSampleBufferRef sampleBufferRef = NULL;
+        if (self.compensateVideoBufferCallback) {
+            sampleBufferRef = self.compensateVideoBufferCallback();
+        }
+        else {
+            sampleBufferRef = [readerVideoTrackOutput copyNextSampleBuffer];
+        }
         if (sampleBufferRef) 
         {
             //NSLog(@"read a video frame: %@", CFBridgingRelease(CMTimeCopyDescription(kCFAllocatorDefault, CMSampleBufferGetOutputPresentationTimeStamp(sampleBufferRef))));
