@@ -821,7 +821,7 @@ NSString *const kGPUImageColorSwizzlingFragmentShaderString = SHADER_STRING
                 }
                 else {
                     if (CMTimeCompare(frameTime, lastVideoTime) <= 0 ) {
-                        double time = CMTimeGetSeconds(frameTime) + 0.001;
+                        double time = CMTimeGetSeconds(lastVideoTime) + 0.005;
                         adjustFrameTime = CMTimeMake(time * 1000, 1000);
                     }
                 }
@@ -831,7 +831,7 @@ NSString *const kGPUImageColorSwizzlingFragmentShaderString = SHADER_STRING
                     NSLog(@"Problem appending pixel buffer at time: %@", CFBridgingRelease(CMTimeCopyDescription(kCFAllocatorDefault, adjustFrameTime)));
                 }
                 else {
-                    lastVideoTime = frameTime;
+                    lastVideoTime = adjustFrameTime;
                 }
             }
             else
