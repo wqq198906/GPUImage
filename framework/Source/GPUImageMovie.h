@@ -26,6 +26,10 @@
  */
 @property(readwrite, nonatomic) BOOL playAtActualSpeed;
 
+/** If frameInterval is not zero, usleep(frameInterval) .
+ */
+@property(readwrite, nonatomic) float frameInterval;
+
 /** This determines whether the video should repeat (loop) at the end and restart from the beginning. Defaults to NO.
  */
 @property(readwrite, nonatomic) BOOL shouldRepeat;

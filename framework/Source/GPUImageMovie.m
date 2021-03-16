@@ -444,6 +444,10 @@ static CVReturn renderCallback(CVDisplayLinkRef displayLink,
                 previousFrameTime = currentSampleTime;
                 previousActualFrameTime = CFAbsoluteTimeGetCurrent();
             }
+            
+            if (self.frameInterval > 0) {
+                usleep(1000000.0 * self.frameInterval);
+            }
 
             __unsafe_unretained GPUImageMovie *weakSelf = self;
             runSynchronouslyOnVideoProcessingQueue(^{
