@@ -57,6 +57,7 @@ void reportAvailableMemoryForGPUImage(NSString *tag);
 @property(readwrite, nonatomic, retain) GPUImageMovieWriter *audioEncodingTarget;
 @property(readwrite, nonatomic, unsafe_unretained) id<GPUImageInput> targetToIgnoreForUpdates;
 @property(nonatomic, copy) void(^frameProcessingCompletionBlock)(GPUImageOutput*, CMTime);
+@property(nonatomic, copy) void(^frameFinishProcessingBlock)(GPUImageOutput*, CMTime);
 @property(nonatomic) BOOL enabled;
 @property(readwrite, nonatomic) GPUTextureOptions outputTextureOptions;
 

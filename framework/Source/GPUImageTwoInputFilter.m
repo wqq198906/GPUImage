@@ -258,6 +258,10 @@ NSString *const kGPUImageTwoInputTextureVertexShaderString = SHADER_STRING
         [super newFrameReadyAtTime:passOnFrameTime atIndex:0]; // Bugfix when trying to record: always use time from first input (unless indefinite, in which case use the second input)
         hasReceivedFirstFrame = NO;
         hasReceivedSecondFrame = NO;
+        
+        if (self.frameFinishProcessingBlock) {
+            self.frameFinishProcessingBlock(self, passOnFrameTime);
+        }
     }
 }
 
